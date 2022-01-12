@@ -46,5 +46,11 @@ get '/.well-known/*' do
     headers.merge! (res.to_hash.map do |k,v|
         { k.split('-').map(&:capitalize).join('-') => v }
     end).reduce(:merge)
-    halt res.code.to_i, res.body
+    halt res.code.to_i, res.body.gsub('/v3/','/v2/')
+end
+
+# For convenience, re-implement /about
+get '/about' do
+    headers['Content-Type'] = 'application/json'
+    halt 200, { 'version'=> 'v2-v3-compat', 'license' => 'Apache2.0' }.to_json
 end
